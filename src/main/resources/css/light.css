@@ -1,0 +1,33 @@
+.root {
+    -fx-base: #ececec;
+    -fx-background: #f4f4f4;
+    -fx-control-inner-background: #ffffff;
+    -fx-accent: #3daee9;
+    -fx-focus-color: #3daee9;
+    -fx-faint-focus-color: #3daee922;
+}
+
+.sidebar {
+    -fx-background-color: #e0e0e0;
+}
+
+.message-bubble-incoming {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: black;
+}
+
+.message-bubble-outgoing {
+    -fx-background-color: #3daee9;
+    -fx-text-fill: white;
+}
+
+.notification-item {
+    -fx-background-color: #ffffff;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 5, 0, 0, 1);
+}
+
+.list-cell:filled:selected:focused,
+.list-cell:filled:selected {
+    -fx-background-color: #3daee9;
+    -fx-text-fill: white;
+}

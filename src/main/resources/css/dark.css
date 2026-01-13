@@ -1,0 +1,51 @@
+.root {
+    -fx-base: #232629;
+    -fx-background: #232629;
+    -fx-control-inner-background: #31363b;
+    -fx-text-fill: #eff0f1;
+    -fx-accent: #3daee9;
+    -fx-focus-color: #3daee9;
+    -fx-faint-focus-color: #3daee944;
+}
+
+.label,
+.text,
+.button,
+.check-box,
+.radio-button {
+    -fx-text-fill: #eff0f1;
+}
+
+.sidebar {
+    -fx-background-color: #31363b;
+}
+
+.message-bubble-incoming {
+    -fx-background-color: #31363b;
+    -fx-text-fill: #eff0f1;
+}
+
+.message-bubble-outgoing {
+    -fx-background-color: #3daee9;
+    -fx-text-fill: #eff0f1;
+}
+
+.notification-item {
+    -fx-background-color: #31363b;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.3), 5, 0, 0, 1);
+    -fx-text-fill: #eff0f1;
+}
+
+.list-cell {
+    -fx-text-fill: #eff0f1;
+}
+
+.list-cell:filled:selected:focused,
+.list-cell:filled:selected {
+    -fx-background-color: #3daee9;
+    -fx-text-fill: #eff0f1;
+}
+
+.list-view {
+    -fx-background-color: #232629;
+}
