@@ -74,18 +74,58 @@ public class MainWindow {
         filesView = new FilesView(connectionService);
         settingsView = new SettingsView();
         showView(notificationsView);
-        Scene scene = new Scene(root, 900, 600);
+        Scene scene = new Scene(root, 1000, 650);
         ThemeManager themeManager = ThemeManager.getInstance();
         themeManager.registerScene(scene);
         stage.setScene(scene);
         stage.setTitle("PhoneUnison");
-        stage.setMinWidth(700);
-        stage.setMinHeight(500);
+        stage.setMinWidth(600);
+        stage.setMinHeight(450);
+
+        scene.widthProperty().addListener((obs, oldVal, newVal) -> {
+            adjustLayoutForWidth(newVal.doubleValue());
+        });
+
         try {
             stage.getIcons().add(new Image(getClass().getResourceAsStream("/icons/app-icon.png")));
         } catch (Exception e) {
             logger.warn("Could not load app icon");
         }
+    }
+
+    private void adjustLayoutForWidth(double width) {
+        if (width < 800) {
+            sidebar.setPrefWidth(70);
+            sidebar.getChildren().forEach(node -> {
+                if (node instanceof VBox vbox) {
+                    vbox.getChildren().forEach(child -> {
+                        if (child instanceof ToggleButton btn) {
+                            HBox content = (HBox) btn.getGraphic();
+                            if (content != null && content.getChildren().size() > 1) {
+                                content.getChildren().get(1).setVisible(false);
+                                content.getChildren().get(1).setManaged(false);
+                            }
+                        }
+                    });
+                }
+            });
+        } else {
+            sidebar.setPrefWidth(250);
+            sidebar.getChildren().forEach(node -> {
+                if (node instanceof VBox vbox) {
+                    vbox.getChildren().forEach(child -> {
+                        if (child instanceof ToggleButton btn) {
+                            HBox content = (HBox) btn.getGraphic();
+                            if (content != null && content.getChildren().size() > 1) {
+                                content.getChildren().get(1).setVisible(true);
+                                content.getChildren().get(1).setManaged(true);
+                            }
+                        }
+                    });
+                }
+            });
+        }
+        contentArea.setPadding(new Insets(width < 700 ? 10 : 20));
     }
 
     private VBox createSidebar() {
