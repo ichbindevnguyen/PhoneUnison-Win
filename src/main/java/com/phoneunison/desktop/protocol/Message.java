@@ -19,28 +19,28 @@ import java.util.Map;
 import java.util.UUID;
 
 public class Message {
-    
+
     private int version = 1;
     private String type;
     private String id;
     private long timestamp;
     private Map<String, Object> data;
-    
+
     public Message() {
         this.id = UUID.randomUUID().toString();
         this.timestamp = System.currentTimeMillis();
     }
-    
+
     public Message(String type) {
         this();
         this.type = type;
     }
-    
+
     public Message(String type, Map<String, Object> data) {
         this(type);
         this.data = data;
     }
-    
+
     public static final String HEARTBEAT = "HEARTBEAT";
     public static final String PAIRING_REQUEST = "PAIRING_REQUEST";
     public static final String PAIRING_RESPONSE = "PAIRING_RESPONSE";
@@ -52,30 +52,63 @@ public class Message {
     public static final String SMS_RECEIVED = "SMS_RECEIVED";
     public static final String CALL_STATE = "CALL_STATE";
     public static final String CALL_ACTION = "CALL_ACTION";
+    public static final String CALL_DIAL = "CALL_DIAL";
+    public static final String SIM_LIST = "SIM_LIST";
+    public static final String SIM_LIST_REQUEST = "SIM_LIST_REQUEST";
     public static final String CLIPBOARD = "CLIPBOARD";
     public static final String FILE_OFFER = "FILE_OFFER";
     public static final String FILE_ACCEPT = "FILE_ACCEPT";
     public static final String FILE_CHUNK = "FILE_CHUNK";
     public static final String FILE_COMPLETE = "FILE_COMPLETE";
     public static final String ERROR = "ERROR";
-    
-    public int getVersion() { return version; }
-    public void setVersion(int version) { this.version = version; }
-    public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
-    public long getTimestamp() { return timestamp; }
-    public void setTimestamp(long timestamp) { this.timestamp = timestamp; }
-    public Map<String, Object> getData() { return data; }
-    public void setData(Map<String, Object> data) { this.data = data; }
-    
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public Map<String, Object> getData() {
+        return data;
+    }
+
+    public void setData(Map<String, Object> data) {
+        this.data = data;
+    }
+
     @SuppressWarnings("unchecked")
     public <T> T getDataField(String key) {
-        if (data == null) return null;
+        if (data == null)
+            return null;
         return (T) data.get(key);
     }
-    
+
     @Override
     public String toString() {
         return "Message{type='" + type + "', id='" + id + "'}";

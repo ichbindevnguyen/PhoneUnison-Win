@@ -227,6 +227,18 @@ public class ConnectionService {
         return connectedDeviceName;
     }
 
+    public String getConnectedDeviceIP() {
+        for (Channel channel : connectedDevices.values()) {
+            if (channel.isActive()) {
+                java.net.SocketAddress address = channel.remoteAddress();
+                if (address instanceof java.net.InetSocketAddress) {
+                    return ((java.net.InetSocketAddress) address).getAddress().getHostAddress();
+                }
+            }
+        }
+        return null;
+    }
+
     public StringProperty deviceNameProperty() {
         return deviceNameProperty;
     }

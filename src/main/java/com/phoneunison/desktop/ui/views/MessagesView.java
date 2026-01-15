@@ -291,21 +291,6 @@ public class MessagesView extends HBox implements MessageHandler.SMSCallback {
         return time.format(DateTimeFormatter.ofPattern("HH:mm"));
     }
 
-    private void addSampleConversations() {
-        Conversation conv1 = new Conversation("1", "John Doe", "+1 234 567 8901");
-        conv1.addMessage(
-                new UiMessage("Hey, are you coming to the meeting?", System.currentTimeMillis() - 3600000, true));
-        conv1.addMessage(
-                new UiMessage("Yes, I'll be there in 10 minutes", System.currentTimeMillis() - 3000000, false));
-        conv1.addMessage(new UiMessage("Great, see you soon!", System.currentTimeMillis() - 2400000, true));
-
-        Conversation conv2 = new Conversation("2", "Mom", "+1 234 567 8902");
-        conv2.addMessage(new UiMessage("Don't forget dinner on Sunday!", System.currentTimeMillis() - 86400000, true));
-        conv2.addMessage(new UiMessage("I won't, see you then!", System.currentTimeMillis() - 82800000, false));
-
-        conversations.addAll(conv1, conv2);
-    }
-
     // Inner classes for data
 
     public static class Conversation {

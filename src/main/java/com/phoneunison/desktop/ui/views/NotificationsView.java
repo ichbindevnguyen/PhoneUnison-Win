@@ -30,37 +30,37 @@ import javafx.scene.text.FontWeight;
  * View for displaying phone notifications.
  */
 public class NotificationsView extends VBox {
-    
+
     private ObservableList<NotificationItem> notifications;
     private ListView<NotificationItem> notificationList;
-    
+
     public NotificationsView() {
         initializeUI();
     }
-    
+
     private void initializeUI() {
         getStyleClass().add("view-container");
         setSpacing(15);
         setPadding(new Insets(0));
-        
+
         // Header
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
         header.setSpacing(10);
-        
+
         Label titleLabel = new Label("Notifications");
         titleLabel.setFont(Font.font("Segoe UI", FontWeight.BOLD, 24));
         titleLabel.getStyleClass().add("view-title");
-        
+
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
-        
+
         Button clearAllBtn = new Button("Clear All");
         clearAllBtn.getStyleClass().add("secondary-button");
         clearAllBtn.setOnAction(e -> clearAllNotifications());
-        
+
         header.getChildren().addAll(titleLabel, spacer, clearAllBtn);
-        
+
         // Notification list
         notifications = FXCollections.observableArrayList();
         notificationList = new ListView<>(notifications);
@@ -68,53 +68,47 @@ public class NotificationsView extends VBox {
         notificationList.setCellFactory(param -> new NotificationCell());
         notificationList.setPlaceholder(createEmptyPlaceholder());
         VBox.setVgrow(notificationList, Priority.ALWAYS);
-        
+
         getChildren().addAll(header, notificationList);
-        
-        // Add some sample notifications for demo
-        addSampleNotifications();
     }
-    
+
     private VBox createEmptyPlaceholder() {
         VBox placeholder = new VBox(10);
         placeholder.setAlignment(Pos.CENTER);
-        
+
         Label iconLabel = new Label("🔔");
         iconLabel.setStyle("-fx-font-size: 48px;");
-        
+
         Label textLabel = new Label("No notifications");
         textLabel.getStyleClass().add("placeholder-text");
-        
+
         Label subLabel = new Label("Notifications from your phone will appear here");
         subLabel.getStyleClass().add("placeholder-subtext");
-        
+
         placeholder.getChildren().addAll(iconLabel, textLabel, subLabel);
         return placeholder;
     }
-    
+
     public void addNotification(NotificationItem notification) {
         notifications.add(0, notification);
     }
-    
+
     public void clearAllNotifications() {
         notifications.clear();
     }
-    
+
     private void addSampleNotifications() {
         notifications.add(new NotificationItem(
-            "WhatsApp", "John Doe", "Hey, are you free for lunch today?", 
-            "com.whatsapp", System.currentTimeMillis() - 120000
-        ));
+                "WhatsApp", "John Doe", "Hey, are you free for lunch today?",
+                "com.whatsapp", System.currentTimeMillis() - 120000));
         notifications.add(new NotificationItem(
-            "Gmail", "New email from Amazon", "Your order has been shipped...",
-            "com.google.android.gm", System.currentTimeMillis() - 300000
-        ));
+                "Gmail", "New email from Amazon", "Your order has been shipped...",
+                "com.google.android.gm", System.currentTimeMillis() - 300000));
         notifications.add(new NotificationItem(
-            "Calendar", "Meeting in 30 minutes", "Team standup - Conference Room A",
-            "com.google.android.calendar", System.currentTimeMillis() - 600000
-        ));
+                "Calendar", "Meeting in 30 minutes", "Team standup - Conference Room A",
+                "com.google.android.calendar", System.currentTimeMillis() - 600000));
     }
-    
+
     /**
      * Notification item data class.
      */
@@ -124,23 +118,37 @@ public class NotificationsView extends VBox {
         private final String content;
         private final String packageName;
         private final long timestamp;
-        
-        public NotificationItem(String appName, String title, String content, 
-                               String packageName, long timestamp) {
+
+        public NotificationItem(String appName, String title, String content,
+                String packageName, long timestamp) {
             this.appName = appName;
             this.title = title;
             this.content = content;
             this.packageName = packageName;
             this.timestamp = timestamp;
         }
-        
-        public String getAppName() { return appName; }
-        public String getTitle() { return title; }
-        public String getContent() { return content; }
-        public String getPackageName() { return packageName; }
-        public long getTimestamp() { return timestamp; }
+
+        public String getAppName() {
+            return appName;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        public String getPackageName() {
+            return packageName;
+        }
+
+        public long getTimestamp() {
+            return timestamp;
+        }
     }
-    
+
     /**
      * Custom cell renderer for notifications.
      */
@@ -148,7 +156,7 @@ public class NotificationsView extends VBox {
         @Override
         protected void updateItem(NotificationItem item, boolean empty) {
             super.updateItem(item, empty);
-            
+
             if (empty || item == null) {
                 setGraphic(null);
                 setText(null);
@@ -157,7 +165,7 @@ public class NotificationsView extends VBox {
                 cell.getStyleClass().add("notification-cell");
                 cell.setPadding(new Insets(12));
                 cell.setAlignment(Pos.CENTER_LEFT);
-                
+
                 // App icon placeholder
                 StackPane iconPane = new StackPane();
                 iconPane.getStyleClass().add("app-icon");
@@ -166,11 +174,11 @@ public class NotificationsView extends VBox {
                 Label iconLabel = new Label(getAppEmoji(item.getPackageName()));
                 iconLabel.setStyle("-fx-font-size: 18px;");
                 iconPane.getChildren().addAll(iconBg, iconLabel);
-                
+
                 // Content
                 VBox content = new VBox(4);
                 HBox.setHgrow(content, Priority.ALWAYS);
-                
+
                 HBox titleRow = new HBox(8);
                 Label appLabel = new Label(item.getAppName());
                 appLabel.getStyleClass().add("notification-app");
@@ -179,40 +187,47 @@ public class NotificationsView extends VBox {
                 Region spacer = new Region();
                 HBox.setHgrow(spacer, Priority.ALWAYS);
                 titleRow.getChildren().addAll(appLabel, spacer, timeLabel);
-                
+
                 Label titleLabel = new Label(item.getTitle());
                 titleLabel.getStyleClass().add("notification-title");
                 titleLabel.setFont(Font.font("Segoe UI", FontWeight.SEMI_BOLD, 13));
-                
+
                 Label contentLabel = new Label(item.getContent());
                 contentLabel.getStyleClass().add("notification-content");
                 contentLabel.setWrapText(true);
-                
+
                 content.getChildren().addAll(titleRow, titleLabel, contentLabel);
-                
+
                 // Dismiss button
                 Button dismissBtn = new Button("✕");
                 dismissBtn.getStyleClass().add("dismiss-button");
                 dismissBtn.setOnAction(e -> notifications.remove(item));
-                
+
                 cell.getChildren().addAll(iconPane, content, dismissBtn);
                 setGraphic(cell);
             }
         }
-        
+
         private String getAppEmoji(String packageName) {
-            if (packageName.contains("whatsapp")) return "💬";
-            if (packageName.contains("gmail") || packageName.contains("gm")) return "📧";
-            if (packageName.contains("calendar")) return "📅";
-            if (packageName.contains("phone")) return "📞";
+            if (packageName.contains("whatsapp"))
+                return "💬";
+            if (packageName.contains("gmail") || packageName.contains("gm"))
+                return "📧";
+            if (packageName.contains("calendar"))
+                return "📅";
+            if (packageName.contains("phone"))
+                return "📞";
             return "📱";
         }
-        
+
         private String formatTime(long timestamp) {
             long diff = System.currentTimeMillis() - timestamp;
-            if (diff < 60000) return "Just now";
-            if (diff < 3600000) return (diff / 60000) + " min ago";
-            if (diff < 86400000) return (diff / 3600000) + " hr ago";
+            if (diff < 60000)
+                return "Just now";
+            if (diff < 3600000)
+                return (diff / 60000) + " min ago";
+            if (diff < 86400000)
+                return (diff / 3600000) + " hr ago";
             return (diff / 86400000) + " days ago";
         }
     }

@@ -32,6 +32,7 @@ public class MessageHandler {
     private CallCallback callCallback;
     private ClipboardCallback clipboardCallback;
     private FileCallback fileCallback;
+    private SimListCallback simListCallback;
 
     public MessageHandler(ConnectionService connectionService) {
         this.connectionService = connectionService;
@@ -49,6 +50,7 @@ public class MessageHandler {
             case Message.NOTIFICATION -> handleNotification(message);
             case Message.SMS_LIST, Message.SMS_MESSAGES, Message.SMS_RECEIVED -> handleSMS(message);
             case Message.CALL_STATE -> handleCallState(message);
+            case Message.SIM_LIST -> handleSimList(message);
             case Message.CLIPBOARD -> handleClipboard(message);
             case Message.FILE_OFFER, Message.FILE_CHUNK, Message.FILE_COMPLETE -> handleFile(message);
             case Message.ERROR -> handleError(message);
@@ -192,6 +194,10 @@ public class MessageHandler {
         void onFileMessage(Message message);
     }
 
+    public interface SimListCallback {
+        void onSimList(Message message);
+    }
+
     public void setNotificationCallback(NotificationCallback callback) {
         this.notificationCallback = callback;
     }
@@ -210,5 +216,15 @@ public class MessageHandler {
 
     public void setFileCallback(FileCallback callback) {
         this.fileCallback = callback;
+    }
+
+    public void setSimListCallback(SimListCallback callback) {
+        this.simListCallback = callback;
+    }
+
+    private void handleSimList(Message message) {
+        if (simListCallback != null) {
+            simListCallback.onSimList(message);
+        }
     }
 }

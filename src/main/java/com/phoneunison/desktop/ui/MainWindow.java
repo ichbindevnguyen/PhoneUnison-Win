@@ -17,6 +17,7 @@ package com.phoneunison.desktop.ui;
 
 import com.phoneunison.desktop.services.ConnectionService;
 import com.phoneunison.desktop.ui.views.*;
+import javafx.animation.FadeTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -29,6 +30,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,8 +70,8 @@ public class MainWindow {
         root.setCenter(contentArea);
         notificationsView = new NotificationsView();
         messagesView = new MessagesView(connectionService);
-        callsView = new CallsView();
-        filesView = new FilesView();
+        callsView = new CallsView(connectionService);
+        filesView = new FilesView(connectionService);
         settingsView = new SettingsView();
         showView(notificationsView);
         Scene scene = new Scene(root, 900, 600);
@@ -171,8 +173,29 @@ public class MainWindow {
     }
 
     private void showView(Region view) {
-        contentArea.getChildren().clear();
-        contentArea.getChildren().add(view);
+        if (!contentArea.getChildren().isEmpty()) {
+            Region currentView = (Region) contentArea.getChildren().get(0);
+            FadeTransition fadeOut = new FadeTransition(Duration.millis(150), currentView);
+            fadeOut.setFromValue(1);
+            fadeOut.setToValue(0);
+            fadeOut.setOnFinished(e -> {
+                contentArea.getChildren().clear();
+                view.setOpacity(0);
+                contentArea.getChildren().add(view);
+                FadeTransition fadeIn = new FadeTransition(Duration.millis(150), view);
+                fadeIn.setFromValue(0);
+                fadeIn.setToValue(1);
+                fadeIn.play();
+            });
+            fadeOut.play();
+        } else {
+            view.setOpacity(0);
+            contentArea.getChildren().add(view);
+            FadeTransition fadeIn = new FadeTransition(Duration.millis(200), view);
+            fadeIn.setFromValue(0);
+            fadeIn.setToValue(1);
+            fadeIn.play();
+        }
     }
 
     private void showPairingDialog() {

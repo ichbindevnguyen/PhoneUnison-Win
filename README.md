@@ -47,22 +47,41 @@ mvn clean package
 
 ```
 PhoneUnison-Win/
-├── src/main/
-│   ├── java/com/phoneunison/desktop/
-│   │   ├── PhoneUnisonApp.java
-│   │   ├── Main.java
-│   │   ├── config/
-│   │   ├── network/
-│   │   ├── protocol/
-│   │   ├── services/
-│   │   ├── ui/
-│   │   │   ├── MainWindow.java
-│   │   │   ├── PairingDialog.java
-│   │   │   └── views/
-│   │   └── utils/
-│   └── resources/
-│       ├── css/
-│       └── images/
+├── src/main/java/com/phoneunison/desktop/
+│   ├── Main.java                        # Entry point
+│   ├── PhoneUnisonApp.java              # JavaFX Application
+│   ├── config/
+│   │   ├── AppConfig.java               # App configuration
+│   │   └── PairedDevice.java            # Paired device model
+│   ├── network/
+│   │   ├── BasicFileUploadHandler.java  # HTTP file upload
+│   │   └── UDPDiscoveryService.java     # Device discovery
+│   ├── protocol/
+│   │   ├── Message.java                 # Message class
+│   │   └── MessageHandler.java          # Protocol handler
+│   ├── services/
+│   │   ├── ClipboardService.java        # Clipboard sync
+│   │   ├── ConnectionService.java       # WebSocket server
+│   │   └── FileUploadService.java       # File sending
+│   ├── ui/
+│   │   ├── MainWindow.java              # Main window
+│   │   ├── PairingDialog.java           # Pairing dialog
+│   │   ├── ThemeManager.java            # Theme handling
+│   │   ├── TrayManager.java             # System tray
+│   │   └── views/
+│   │       ├── CallsView.java           # Dialpad & calls
+│   │       ├── FilesView.java           # File transfer
+│   │       ├── MessagesView.java        # SMS messaging
+│   │       ├── NotificationsView.java   # Notifications
+│   │       └── SettingsView.java        # Settings
+│   └── utils/
+│       ├── CryptoUtils.java             # Encryption
+│       └── QRCodeGenerator.java         # QR code generation
+├── src/main/resources/
+│   └── styles/                          # Theme CSS files
+│       ├── kde-breeze.css
+│       ├── kde-breeze-light.css
+│       └── catppuccin-*.css
 ├── pom.xml
 └── README.md
 ```
