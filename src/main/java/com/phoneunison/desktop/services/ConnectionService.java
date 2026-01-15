@@ -103,7 +103,8 @@ public class ConnectionService {
             return;
         }
         bossGroup = new NioEventLoopGroup(1);
-        workerGroup = new NioEventLoopGroup();
+        int workerThreads = Math.max(2, Runtime.getRuntime().availableProcessors());
+        workerGroup = new NioEventLoopGroup(workerThreads);
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workerGroup)
@@ -272,10 +273,10 @@ public class ConnectionService {
 
     public void broadcast(Message message) {
         String json = gson.toJson(message);
-        TextWebSocketFrame frame = new TextWebSocketFrame(json);
         for (Channel channel : connectedDevices.values()) {
-            if (channel.isActive())
-                channel.writeAndFlush(frame.copy());
+            if (channel.isActive()) {
+                channel.writeAndFlush(new TextWebSocketFrame(json));
+            }
         }
     }
 
@@ -293,6 +294,12 @@ public class ConnectionService {
 
     private class WebSocketFrameHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
         private String deviceId;
+        private ChannelHandlerContext handlerContext;
+
+        @Override
+        public void handlerAdded(ChannelHandlerContext ctx) {
+            this.handlerContext = ctx;
+        }
 
         @Override
         protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame frame) {
@@ -328,12 +335,10 @@ public class ConnectionService {
 
         public void setDeviceId(String deviceId) {
             this.deviceId = deviceId;
-            connectedDevices.put(deviceId, ctx().channel());
+            if (handlerContext != null) {
+                connectedDevices.put(deviceId, handlerContext.channel());
+            }
             Platform.runLater(() -> connected.set(true));
-        }
-
-        private ChannelHandlerContext ctx() {
-            return null;
         }
     }
 }

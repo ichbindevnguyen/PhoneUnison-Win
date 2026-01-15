@@ -285,10 +285,12 @@ public class MessagesView extends HBox implements MessageHandler.SMSCallback {
         // TODO: Implement new message dialog
     }
 
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
+
     private String formatMessageTime(long timestamp) {
         LocalDateTime time = LocalDateTime.ofInstant(
                 Instant.ofEpochMilli(timestamp), ZoneId.systemDefault());
-        return time.format(DateTimeFormatter.ofPattern("HH:mm"));
+        return time.format(TIME_FORMATTER);
     }
 
     // Inner classes for data

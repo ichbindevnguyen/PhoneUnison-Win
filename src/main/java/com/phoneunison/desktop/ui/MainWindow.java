@@ -215,14 +215,14 @@ public class MainWindow {
     private void showView(Region view) {
         if (!contentArea.getChildren().isEmpty()) {
             Region currentView = (Region) contentArea.getChildren().get(0);
-            FadeTransition fadeOut = new FadeTransition(Duration.millis(150), currentView);
+            FadeTransition fadeOut = new FadeTransition(Duration.millis(100), currentView);
             fadeOut.setFromValue(1);
             fadeOut.setToValue(0);
             fadeOut.setOnFinished(e -> {
                 contentArea.getChildren().clear();
                 view.setOpacity(0);
                 contentArea.getChildren().add(view);
-                FadeTransition fadeIn = new FadeTransition(Duration.millis(150), view);
+                FadeTransition fadeIn = new FadeTransition(Duration.millis(100), view);
                 fadeIn.setFromValue(0);
                 fadeIn.setToValue(1);
                 fadeIn.play();
@@ -231,7 +231,7 @@ public class MainWindow {
         } else {
             view.setOpacity(0);
             contentArea.getChildren().add(view);
-            FadeTransition fadeIn = new FadeTransition(Duration.millis(200), view);
+            FadeTransition fadeIn = new FadeTransition(Duration.millis(100), view);
             fadeIn.setFromValue(0);
             fadeIn.setToValue(1);
             fadeIn.play();
