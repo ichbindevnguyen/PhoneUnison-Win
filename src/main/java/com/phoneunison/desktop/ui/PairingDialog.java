@@ -48,14 +48,40 @@ public class PairingDialog extends Stage {
 
     public PairingDialog(Stage owner, ConnectionService connectionService) {
         this.connectionService = connectionService;
-        initModality(Modality.APPLICATION_MODAL);
-        initOwner(owner);
-        initStyle(StageStyle.DECORATED);
+
+        try {
+            initModality(Modality.APPLICATION_MODAL);
+        } catch (Exception e) {
+            logger.warn("Could not set modality: {}", e.getMessage());
+        }
+
+        try {
+            if (owner != null) {
+                initOwner(owner);
+            }
+        } catch (Exception e) {
+            logger.warn("Could not set owner: {}", e.getMessage());
+        }
+
+        try {
+            initStyle(StageStyle.DECORATED);
+        } catch (Exception e) {
+            logger.warn("Could not set style: {}", e.getMessage());
+        }
+
         setTitle("Pair Device");
         setResizable(false);
+
+        logger.info("Initializing PairingDialog UI...");
         initializeUI();
+        logger.info("PairingDialog UI initialized");
+
+        logger.info("Generating initial pairing code...");
         generatePairingCode();
+        logger.info("Initial pairing code generated");
+
         setupConnectionListener();
+        logger.info("PairingDialog fully initialized");
     }
 
     private void setupConnectionListener() {
@@ -93,10 +119,12 @@ public class PairingDialog extends Stage {
         root.setPadding(new Insets(30));
         root.setAlignment(Pos.CENTER);
         root.setPrefWidth(420);
+        root.setStyle("-fx-background-color: #2d2d2d;");
 
         Label titleLabel = new Label("Pair Your Phone");
         titleLabel.setFont(Font.font("Segoe UI", FontWeight.BOLD, 22));
         titleLabel.getStyleClass().add("dialog-title");
+        titleLabel.setStyle("-fx-text-fill: white;");
 
         Label instructionsLabel = new Label(
                 "1. Install PhoneUnison on your Android phone\n" +
@@ -104,6 +132,7 @@ public class PairingDialog extends Stage {
                         "3. Scan the QR code or enter the code manually");
         instructionsLabel.setTextAlignment(TextAlignment.CENTER);
         instructionsLabel.getStyleClass().add("instructions");
+        instructionsLabel.setStyle("-fx-text-fill: #cccccc;");
 
         StackPane qrContainer = new StackPane();
         qrContainer.getStyleClass().add("qr-container");
@@ -133,6 +162,7 @@ public class PairingDialog extends Stage {
         ipAddressLabel = new Label("Loading...");
         ipAddressLabel.setFont(Font.font("Consolas", FontWeight.BOLD, 14));
         ipAddressLabel.getStyleClass().add("ip-address");
+        ipAddressLabel.setStyle("-fx-text-fill: #3498db;");
         ipBox.getChildren().addAll(ipLabel, ipAddressLabel);
 
         VBox codeBox = new VBox(2);
@@ -142,6 +172,7 @@ public class PairingDialog extends Stage {
         pairingCodeLabel = new Label("------");
         pairingCodeLabel.setFont(Font.font("Consolas", FontWeight.BOLD, 28));
         pairingCodeLabel.getStyleClass().add("pairing-code");
+        pairingCodeLabel.setStyle("-fx-text-fill: #27ae60;");
         codeBox.getChildren().addAll(codeLabel, pairingCodeLabel);
 
         codeRow.getChildren().addAll(ipBox, codeBox);
@@ -152,6 +183,7 @@ public class PairingDialog extends Stage {
 
         statusLabel = new Label("Waiting for connection...");
         statusLabel.getStyleClass().add("status-label");
+        statusLabel.setStyle("-fx-text-fill: #95a5a6;");
 
         HBox statusBox = new HBox(10);
         statusBox.setAlignment(Pos.CENTER);
@@ -162,19 +194,32 @@ public class PairingDialog extends Stage {
 
         Button refreshButton = new Button("Refresh Code");
         refreshButton.getStyleClass().add("secondary-button");
+        refreshButton.setStyle(
+                "-fx-background-color: #3498db; -fx-text-fill: white; -fx-padding: 8 16; -fx-background-radius: 5;");
         refreshButton.setOnAction(e -> generatePairingCode());
 
         Button cancelButton = new Button("Cancel");
         cancelButton.getStyleClass().add("secondary-button");
+        cancelButton.setStyle(
+                "-fx-background-color: #7f8c8d; -fx-text-fill: white; -fx-padding: 8 16; -fx-background-radius: 5;");
         cancelButton.setOnAction(e -> close());
 
         buttonBox.getChildren().addAll(refreshButton, cancelButton);
 
         root.getChildren().addAll(titleLabel, instructionsLabel, qrContainer, codeSection, statusBox, buttonBox);
 
-        Scene scene = new Scene(root);
-        ThemeManager.getInstance().registerScene(scene);
+        Scene scene = new Scene(root, 450, 550);
+
+        try {
+            ThemeManager.getInstance().registerScene(scene);
+        } catch (Exception e) {
+            logger.warn("Could not apply theme to pairing dialog: {}", e.getMessage());
+        }
+
         setScene(scene);
+        setMinWidth(400);
+        setMinHeight(500);
+        centerOnScreen();
     }
 
     private void generatePairingCode() {

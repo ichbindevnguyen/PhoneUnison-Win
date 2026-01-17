@@ -249,8 +249,23 @@ public class MainWindow {
     }
 
     private void showPairingDialog() {
-        PairingDialog dialog = new PairingDialog(stage, connectionService);
-        dialog.showAndWait();
+        try {
+            logger.info("Opening pairing dialog...");
+            PairingDialog dialog = new PairingDialog(stage, connectionService);
+            dialog.showAndWait();
+            logger.info("Pairing dialog closed");
+        } catch (Exception e) {
+            logger.error("Failed to open pairing dialog", e);
+            javafx.application.Platform.runLater(() -> {
+                javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
+                        javafx.scene.control.Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Failed to open pairing dialog");
+                alert.setContentText("An error occurred: " + e.getMessage() +
+                        "\n\nPlease check your network connection and try again.");
+                alert.showAndWait();
+            });
+        }
     }
 
     private void setupEventHandlers() {

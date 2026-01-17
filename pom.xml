@@ -233,5 +233,44 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>portable</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.panteleyev</groupId>
+                        <artifactId>jpackage-maven-plugin</artifactId>
+                        <version>1.6.5</version>
+                        <configuration>
+                            <name>PhoneUnison</name>
+                            <appVersion>1.0.0</appVersion>
+                            <vendor>PhoneUnison</vendor>
+                            <description>Cross-platform phone-PC connectivity application</description>
+                            <copyright>Copyright © 2024 PhoneUnison</copyright>
+                            <input>${project.build.directory}</input>
+                            <mainJar>${project.artifactId}-${project.version}.jar</mainJar>
+                            <mainClass>com.phoneunison.desktop.Main</mainClass>
+                            <destination>${project.build.directory}/portable</destination>
+                            <javaOptions>
+                                <option>-Xmx512m</option>
+                                <option>--add-opens=java.base/java.lang=ALL-UNNAMED</option>
+                            </javaOptions>
+                            <icon>${project.basedir}/src/main/resources/icons/app-icon.ico</icon>
+                            <winConsole>false</winConsole>
+                            <type>APP_IMAGE</type>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>app-image</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jpackage</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 </project>
