@@ -156,7 +156,7 @@ public class FilesView extends VBox {
             throw new Exception("Not connected");
 
         String host = connectionService.getConnectedDeviceIP();
-        int port = 8765;
+        int port = 8766;
 
         if (host == null || host.isEmpty()) {
             throw new Exception("Device IP not available");

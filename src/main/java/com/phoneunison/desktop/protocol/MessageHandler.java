@@ -52,7 +52,8 @@ public class MessageHandler {
             case Message.CALL_STATE -> handleCallState(message);
             case Message.SIM_LIST -> handleSimList(message);
             case Message.CLIPBOARD -> handleClipboard(message);
-            case Message.FILE_OFFER, Message.FILE_CHUNK, Message.FILE_COMPLETE -> handleFile(message);
+            case Message.FILE_OFFER, Message.FILE_ACCEPT, Message.FILE_CHUNK, Message.FILE_COMPLETE ->
+                handleFile(message);
             case Message.ERROR -> handleError(message);
             default -> logger.warn("Unknown message type: {}", message.getType());
         }

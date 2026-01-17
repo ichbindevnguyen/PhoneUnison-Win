@@ -191,7 +191,17 @@ public class MainWindow {
         pairButton.visibleProperty().bind(connectionService.connectedProperty().not());
         pairButton.managedProperty().bind(pairButton.visibleProperty());
 
-        header.getChildren().addAll(phoneIcon, deviceNameLabel, batteryLabel, statusBox, pairButton);
+        Button disconnectButton = new Button("Disconnect");
+        disconnectButton.getStyleClass().add("disconnect-button");
+        disconnectButton.setStyle(
+                "-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-padding: 8 16; -fx-background-radius: 5;");
+        disconnectButton.setOnAction(e -> {
+            connectionService.disconnectAndClear();
+        });
+        disconnectButton.visibleProperty().bind(connectionService.connectedProperty());
+        disconnectButton.managedProperty().bind(disconnectButton.visibleProperty());
+
+        header.getChildren().addAll(phoneIcon, deviceNameLabel, batteryLabel, statusBox, pairButton, disconnectButton);
         return header;
     }
 

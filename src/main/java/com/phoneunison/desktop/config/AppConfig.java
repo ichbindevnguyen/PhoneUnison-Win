@@ -122,6 +122,12 @@ public class AppConfig {
         save();
     }
 
+    public void clearPairedDevices() {
+        pairedDevices.clear();
+        save();
+        logger.info("All paired devices cleared");
+    }
+
     public PairedDevice getPairedDevice(String deviceId) {
         return pairedDevices.stream()
                 .filter(d -> d.getDeviceId().equals(deviceId))

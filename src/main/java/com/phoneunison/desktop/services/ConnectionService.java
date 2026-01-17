@@ -72,7 +72,6 @@ public class ConnectionService {
         this.config = config;
         this.messageHandler = new MessageHandler(this);
 
-        // Auto-accept file offers
         this.messageHandler.setFileCallback(message -> {
             if (Message.FILE_OFFER.equals(message.getType())) {
                 String fileName = message.getDataField("fileName");
@@ -83,9 +82,8 @@ public class ConnectionService {
                     return;
                 }
 
-                logger.info("Received file offer: {}", fileName);
+                logger.info("Received file offer from Android: {}", fileName);
 
-                // Send accept
                 java.util.Map<String, Object> data = new java.util.HashMap<>();
                 data.put("fileName", fileName);
                 if (uri != null) {
@@ -194,6 +192,11 @@ public class ConnectionService {
     }
 
     public boolean validatePairing(String code, String deviceId, String devicePublicKey) {
+        if (config.getPairedDevice(deviceId) != null) {
+            logger.info("Known device reconnecting: {}", deviceId);
+            return true;
+        }
+
         if (System.currentTimeMillis() > pairingExpiry) {
             logger.warn("Pairing code expired");
             return false;
@@ -226,6 +229,23 @@ public class ConnectionService {
 
     public String getConnectedDeviceName() {
         return connectedDeviceName;
+    }
+
+    public void disconnectAndClear() {
+        logger.info("User requested disconnect - clearing paired devices");
+        for (Channel channel : connectedDevices.values()) {
+            if (channel.isActive()) {
+                channel.close();
+            }
+        }
+        connectedDevices.clear();
+        connectedDeviceName = null;
+        config.clearPairedDevices();
+        Platform.runLater(() -> {
+            connected.set(false);
+            deviceNameProperty.set("No Device Connected");
+            batteryLevel.set(0);
+        });
     }
 
     public String getConnectedDeviceIP() {

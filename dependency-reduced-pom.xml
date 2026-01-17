@@ -66,6 +66,66 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>installer</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.panteleyev</groupId>
+            <artifactId>jpackage-maven-plugin</artifactId>
+            <version>1.6.5</version>
+            <executions>
+              <execution>
+                <id>exe</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>jpackage</goal>
+                </goals>
+                <configuration>
+                  <type>EXE</type>
+                </configuration>
+              </execution>
+              <execution>
+                <id>msi</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>jpackage</goal>
+                </goals>
+                <configuration>
+                  <type>MSI</type>
+                </configuration>
+              </execution>
+            </executions>
+            <configuration>
+              <name>PhoneUnison</name>
+              <appVersion>1.0.0</appVersion>
+              <vendor>PhoneUnison</vendor>
+              <description>Cross-platform phone-PC connectivity application</description>
+              <copyright>Copyright © 2024 PhoneUnison</copyright>
+              <input>${project.build.directory}</input>
+              <mainJar>${project.artifactId}-${project.version}.jar</mainJar>
+              <mainClass>com.phoneunison.desktop.Main</mainClass>
+              <destination>${project.build.directory}/installer</destination>
+              <javaOptions>
+                <option>-Xmx512m</option>
+                <option>--add-opens=java.base/java.lang=ALL-UNNAMED</option>
+              </javaOptions>
+              <icon>${project.basedir}/src/main/resources/icons/app-icon.ico</icon>
+              <winDirChooser>true</winDirChooser>
+              <winMenu>true</winMenu>
+              <winMenuGroup>PhoneUnison</winMenuGroup>
+              <winShortcut>true</winShortcut>
+              <winShortcutPrompt>true</winShortcutPrompt>
+              <winPerUserInstall>false</winPerUserInstall>
+              <winConsole>false</winConsole>
+              <winUpgradeUuid>a1b2c3d4-e5f6-7890-abcd-ef1234567890</winUpgradeUuid>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
   <dependencies>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
