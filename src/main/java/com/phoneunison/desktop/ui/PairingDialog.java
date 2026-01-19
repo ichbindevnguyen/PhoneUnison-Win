@@ -38,6 +38,18 @@ import java.net.InetAddress;
 public class PairingDialog extends Stage {
 
     private static final Logger logger = LoggerFactory.getLogger(PairingDialog.class);
+    private static final String FALLBACK_STYLES = """
+            .root { -fx-background-color: #2d2d2d; }
+            .pairing-dialog { -fx-background-color: #2d2d2d; }
+            .dialog-title { -fx-text-fill: white; }
+            .instructions { -fx-text-fill: #cccccc; }
+            .qr-container { -fx-background-color: white; -fx-background-radius: 12px; }
+            .or-label { -fx-text-fill: #7F8C8D; }
+            .ip-address { -fx-text-fill: #3498db; }
+            .pairing-code { -fx-text-fill: #27ae60; }
+            .status-label { -fx-text-fill: #95a5a6; }
+            .secondary-button { -fx-background-color: #3498db; -fx-text-fill: white; -fx-padding: 8 16; -fx-background-radius: 5; }
+            """;
     private final ConnectionService connectionService;
     private ImageView qrCodeView;
     private Label pairingCodeLabel;
@@ -134,16 +146,10 @@ public class PairingDialog extends Stage {
         instructionsLabel.getStyleClass().add("instructions");
         instructionsLabel.setStyle("-fx-text-fill: #cccccc;");
 
-        StackPane qrContainer = new StackPane();
-        qrContainer.getStyleClass().add("qr-container");
-        qrContainer.setPadding(new Insets(15));
-        qrContainer.setStyle("-fx-background-color: white; -fx-background-radius: 12px;");
-
         qrCodeView = new ImageView();
         qrCodeView.setFitWidth(180);
         qrCodeView.setFitHeight(180);
         qrCodeView.setPreserveRatio(true);
-        qrContainer.getChildren().add(qrCodeView);
 
         VBox codeSection = new VBox(8);
         codeSection.setAlignment(Pos.CENTER);
@@ -206,14 +212,19 @@ public class PairingDialog extends Stage {
 
         buttonBox.getChildren().addAll(refreshButton, cancelButton);
 
-        root.getChildren().addAll(titleLabel, instructionsLabel, qrContainer, codeSection, statusBox, buttonBox);
+        root.getChildren().addAll(titleLabel, instructionsLabel, qrCodeView, codeSection, statusBox, buttonBox);
 
         Scene scene = new Scene(root, 450, 550);
 
         try {
             ThemeManager.getInstance().registerScene(scene);
         } catch (Exception e) {
-            logger.warn("Could not apply theme to pairing dialog: {}", e.getMessage());
+            logger.warn("Could not apply theme to pairing dialog, using fallback styles: {}", e.getMessage());
+            try {
+                scene.getStylesheets().add("data:text/css," + FALLBACK_STYLES.replace(" ", "%20").replace("\n", "%0A"));
+            } catch (Exception fallbackEx) {
+                logger.debug("Could not apply fallback stylesheet, inline styles already applied");
+            }
         }
 
         setScene(scene);

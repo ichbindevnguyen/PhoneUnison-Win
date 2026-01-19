@@ -249,23 +249,58 @@ public class MainWindow {
     }
 
     private void showPairingDialog() {
+        logger.info("Opening pairing dialog - starting...");
         try {
-            logger.info("Opening pairing dialog...");
+            logger.info("Creating PairingDialog instance...");
             PairingDialog dialog = new PairingDialog(stage, connectionService);
+            logger.info("PairingDialog created successfully, calling showAndWait...");
             dialog.showAndWait();
-            logger.info("Pairing dialog closed");
-        } catch (Exception e) {
-            logger.error("Failed to open pairing dialog", e);
+            logger.info("Pairing dialog closed normally");
+        } catch (Throwable e) {
+            logger.error("Failed to open pairing dialog: {}", e.getClass().getName());
+            logger.error("Error message: {}", e.getMessage());
+            logger.error("Full stack trace:", e);
+
+            // Log cause chain
+            Throwable cause = e.getCause();
+            while (cause != null) {
+                logger.error("Caused by: {} - {}", cause.getClass().getName(), cause.getMessage());
+                cause = cause.getCause();
+            }
+
+            final String errorMsg = e.getMessage() != null ? e.getMessage() : e.getClass().getName();
+            final String fullTrace = getStackTraceString(e);
+
             javafx.application.Platform.runLater(() -> {
                 javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
                         javafx.scene.control.Alert.AlertType.ERROR);
                 alert.setTitle("Error");
                 alert.setHeaderText("Failed to open pairing dialog");
-                alert.setContentText("An error occurred: " + e.getMessage() +
-                        "\n\nPlease check your network connection and try again.");
+                alert.setContentText("Error: " + errorMsg);
+
+                // Add expandable details
+                javafx.scene.control.TextArea textArea = new javafx.scene.control.TextArea(fullTrace);
+                textArea.setEditable(false);
+                textArea.setWrapText(true);
+                textArea.setMaxWidth(Double.MAX_VALUE);
+                textArea.setMaxHeight(Double.MAX_VALUE);
+
+                javafx.scene.layout.GridPane expContent = new javafx.scene.layout.GridPane();
+                expContent.setMaxWidth(Double.MAX_VALUE);
+                expContent.add(new javafx.scene.control.Label("Stack trace:"), 0, 0);
+                expContent.add(textArea, 0, 1);
+
+                alert.getDialogPane().setExpandableContent(expContent);
                 alert.showAndWait();
             });
         }
+    }
+
+    private String getStackTraceString(Throwable e) {
+        java.io.StringWriter sw = new java.io.StringWriter();
+        java.io.PrintWriter pw = new java.io.PrintWriter(sw);
+        e.printStackTrace(pw);
+        return sw.toString();
     }
 
     private void setupEventHandlers() {

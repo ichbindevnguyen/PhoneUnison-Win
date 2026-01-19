@@ -58,7 +58,7 @@ public class ThemeManager {
         try {
             scene.getStylesheets().clear();
 
-            String theme = "light";
+            String theme = "kde-breeze";
             try {
                 com.phoneunison.desktop.config.AppConfig config = com.phoneunison.desktop.PhoneUnisonApp.getInstance()
                         .getConfig();
@@ -69,22 +69,51 @@ public class ThemeManager {
                 logger.debug("Could not get theme from config, using default: {}", e.getMessage());
             }
 
-            String cssFile = "/css/light.css";
-            if ("dark".equalsIgnoreCase(theme)) {
-                cssFile = "/css/dark.css";
-            } else if ("catppuccin".equalsIgnoreCase(theme)) {
-                cssFile = "/css/catppuccin.css";
-            }
+            String cssFile = mapThemeToCssFile(theme);
+            logger.info("Loading theme: {} -> {}", theme, cssFile);
 
             URL cssResource = getClass().getResource(cssFile);
             if (cssResource != null) {
                 scene.getStylesheets().add(cssResource.toExternalForm());
-                logger.debug("Applied theme CSS: {}", cssFile);
+                logger.info("Applied theme CSS: {}", cssFile);
             } else {
-                logger.warn("Could not find CSS resource: {}", cssFile);
+                logger.warn("Could not find CSS resource: {}, trying fallback", cssFile);
+                URL fallback = getClass().getResource("/styles/kde-breeze.css");
+                if (fallback != null) {
+                    scene.getStylesheets().add(fallback.toExternalForm());
+                    logger.info("Applied fallback theme CSS");
+                } else {
+                    logger.error("No CSS files found - UI may look incorrect");
+                }
             }
         } catch (Exception e) {
-            logger.warn("Failed to apply theme to scene: {}", e.getMessage());
+            logger.error("Failed to apply theme to scene: {}", e.getMessage(), e);
         }
+    }
+
+    private String mapThemeToCssFile(String theme) {
+        if (theme == null) {
+            return "/styles/kde-breeze.css";
+        }
+
+        String lowerTheme = theme.toLowerCase();
+
+        if (lowerTheme.contains("kde-breeze-light") || lowerTheme.equals("light")) {
+            return "/styles/kde-breeze-light.css";
+        } else if (lowerTheme.contains("kde-breeze") || lowerTheme.equals("dark")) {
+            return "/styles/kde-breeze.css";
+        } else if (lowerTheme.contains("catppuccin-mocha")) {
+            return "/styles/catppuccin-mocha.css";
+        } else if (lowerTheme.contains("catppuccin-macchiato")) {
+            return "/styles/catppuccin-macchiato.css";
+        } else if (lowerTheme.contains("catppuccin-frappe")) {
+            return "/styles/catppuccin-frappe.css";
+        } else if (lowerTheme.contains("catppuccin-latte")) {
+            return "/styles/catppuccin-latte.css";
+        } else if (lowerTheme.contains("catppuccin")) {
+            return "/styles/catppuccin-mocha.css";
+        }
+
+        return "/styles/kde-breeze.css";
     }
 }

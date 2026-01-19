@@ -33,21 +33,30 @@
     </properties>
 
     <dependencies>
-        <!-- JavaFX -->
+        <!-- JavaFX with Windows platform classifier for native libraries -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>${javafx.version}</version>
+            <classifier>win</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
             <version>${javafx.version}</version>
+            <classifier>win</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-graphics</artifactId>
             <version>${javafx.version}</version>
+            <classifier>win</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-base</artifactId>
+            <version>${javafx.version}</version>
+            <classifier>win</classifier>
         </dependency>
 
         <!-- Netty for WebSocket -->
@@ -196,7 +205,10 @@
                             <javaOptions>
                                 <option>-Xmx512m</option>
                                 <option>--add-opens=java.base/java.lang=ALL-UNNAMED</option>
+                                <option>--add-opens=java.base/java.lang.reflect=ALL-UNNAMED</option>
+                                <option>--add-opens=java.base/java.io=ALL-UNNAMED</option>
                             </javaOptions>
+                            <addModules>java.base,java.desktop,java.logging,java.management,java.naming,java.net.http,java.prefs,java.sql,jdk.unsupported,jdk.charsets</addModules>
                             <icon>${project.basedir}/src/main/resources/icons/app-icon.ico</icon>
                             <winDirChooser>true</winDirChooser>
                             <winMenu>true</winMenu>
@@ -254,7 +266,10 @@
                             <javaOptions>
                                 <option>-Xmx512m</option>
                                 <option>--add-opens=java.base/java.lang=ALL-UNNAMED</option>
+                                <option>--add-opens=java.base/java.lang.reflect=ALL-UNNAMED</option>
+                                <option>--add-opens=java.base/java.io=ALL-UNNAMED</option>
                             </javaOptions>
+                            <addModules>java.base,java.desktop,java.logging,java.management,java.naming,java.net.http,java.prefs,java.sql,jdk.unsupported,jdk.charsets</addModules>
                             <icon>${project.basedir}/src/main/resources/icons/app-icon.ico</icon>
                             <winConsole>false</winConsole>
                             <type>APP_IMAGE</type>
