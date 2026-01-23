@@ -24,7 +24,7 @@ import java.awt.datatransfer.*;
 import java.io.IOException;
 
 public class ClipboardService implements ClipboardOwner {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(ClipboardService.class);
     private final ConnectionService connectionService;
     private final Clipboard clipboard;
@@ -32,29 +32,32 @@ public class ClipboardService implements ClipboardOwner {
     private boolean enabled = true;
     private volatile boolean running = false;
     private Thread monitorThread;
-    
+
     public ClipboardService(ConnectionService connectionService) {
         this.connectionService = connectionService;
         this.clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
     }
-    
+
     public void start() {
-        if (running) return;
+        if (running)
+            return;
         running = true;
         monitorThread = new Thread(this::monitorClipboard, "ClipboardMonitor");
         monitorThread.setDaemon(true);
         monitorThread.start();
         logger.info("Clipboard service started");
     }
-    
+
     public void stop() {
         running = false;
-        if (monitorThread != null) monitorThread.interrupt();
+        if (monitorThread != null)
+            monitorThread.interrupt();
         logger.info("Clipboard service stopped");
     }
-    
+
     public void setContent(String content) {
-        if (!enabled || content == null || content.equals(lastContent)) return;
+        if (!enabled || content == null || content.equals(lastContent))
+            return;
         try {
             lastContent = content;
             StringSelection selection = new StringSelection(content);
@@ -64,7 +67,7 @@ public class ClipboardService implements ClipboardOwner {
             logger.error("Failed to set clipboard", e);
         }
     }
-    
+
     public String getTextContent() {
         try {
             Transferable contents = clipboard.getContents(this);
@@ -76,12 +79,13 @@ public class ClipboardService implements ClipboardOwner {
         }
         return null;
     }
-    
+
     private void monitorClipboard() {
         while (running) {
             try {
                 Thread.sleep(500);
-                if (!enabled || !connectionService.isConnected()) continue;
+                if (!enabled || !connectionService.isConnected())
+                    continue;
                 String currentContent = getTextContent();
                 if (currentContent != null && !currentContent.equals(lastContent)) {
                     lastContent = currentContent;
@@ -95,14 +99,28 @@ public class ClipboardService implements ClipboardOwner {
             }
         }
     }
-    
+
     private void sendClipboardToDevice(String content) {
         logger.debug("Sending clipboard to device: {} chars", content.length());
+        if (connectionService.isConnected()) {
+            java.util.Map<String, Object> data = new java.util.HashMap<>();
+            data.put("content", content);
+            data.put("contentType", "text/plain");
+            com.phoneunison.desktop.protocol.Message message = new com.phoneunison.desktop.protocol.Message(
+                    com.phoneunison.desktop.protocol.Message.CLIPBOARD, data);
+            connectionService.broadcast(message);
+        }
     }
-    
+
     @Override
-    public void lostOwnership(Clipboard clipboard, Transferable contents) {}
-    
-    public void setEnabled(boolean enabled) { this.enabled = enabled; }
-    public boolean isEnabled() { return enabled; }
+    public void lostOwnership(Clipboard clipboard, Transferable contents) {
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
 }

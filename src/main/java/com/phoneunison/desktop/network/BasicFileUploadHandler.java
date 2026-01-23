@@ -41,16 +41,22 @@ public class BasicFileUploadHandler extends SimpleChannelInboundHandler<HttpObje
             if (msg instanceof HttpContent) {
                 HttpContent content = (HttpContent) msg;
                 ByteBuf buf = content.content();
-                if (buf.isReadable()) {
-                    byte[] bytes = new byte[buf.readableBytes()];
-                    buf.readBytes(bytes);
-                    if (fileOutputStream != null) {
-                        fileOutputStream.write(bytes);
+                try {
+                    if (buf.isReadable()) {
+                        byte[] bytes = new byte[buf.readableBytes()];
+                        buf.readBytes(bytes);
+                        if (fileOutputStream != null) {
+                            fileOutputStream.write(bytes);
+                        }
                     }
-                }
 
-                if (msg instanceof LastHttpContent) {
-                    finishUpload(ctx);
+                    if (msg instanceof LastHttpContent) {
+                        finishUpload(ctx);
+                    }
+                } catch (IOException e) {
+                    logger.error("Error writing file chunk", e);
+                    cleanupUpload();
+                    sendResponse(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR, "Error writing file");
                 }
             }
         } else {
@@ -93,6 +99,21 @@ public class BasicFileUploadHandler extends SimpleChannelInboundHandler<HttpObje
         } finally {
             isUploading = false;
             fileOutputStream = null;
+        }
+    }
+
+    private void cleanupUpload() {
+        try {
+            if (fileOutputStream != null) {
+                fileOutputStream.close();
+            }
+        } catch (IOException ignored) {
+        } finally {
+            isUploading = false;
+            fileOutputStream = null;
+            if (currentFile != null && currentFile.exists()) {
+                currentFile.delete();
+            }
         }
     }
 
